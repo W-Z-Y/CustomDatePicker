@@ -92,7 +92,7 @@
 
 - (void)addYearPickerViewWithFrame:(CGRect)frame {
     yearPicker = [[CustomPickerView alloc] initWithFrame:frame];
-    selectedYear = [self setNowTime:0];
+    selectedYear = [DateHelper setNowTime:0];
     [yearPicker setSelectedIndex:selectedYear-kStartYear];
     yearPicker.delegate = self;
     [self addSubview:yearPicker];
@@ -100,7 +100,7 @@
 
 - (void)addMonthPickerViewWithFrame:(CGRect)frame {
     monthPicker = [[CustomPickerView alloc] initWithFrame:frame];
-    selectedMonth = [self setNowTime:1];
+    selectedMonth = [DateHelper setNowTime:1];
     [monthPicker setSelectedIndex:selectedMonth-1];
     monthPicker.delegate = self;
     [self addSubview:monthPicker];
@@ -108,7 +108,7 @@
 
 - (void)addDayPickerViewWithFrame:(CGRect)frame {
     dayPicker = [[CustomPickerView alloc] initWithFrame:frame];
-    selectedDay = [self setNowTime:2];
+    selectedDay = [DateHelper setNowTime:2];
     [dayPicker setSelectedIndex:selectedDay-1];
     dayPicker.delegate = self;
     [self addSubview:dayPicker];
@@ -188,35 +188,6 @@
         label.text = [NSString stringWithFormat:@"%ld", index+1];
     }
     return label;
-}
-
-#pragma mark - 当前时间
-- (NSInteger)setNowTime:(NSInteger)timeType {
-    NSDate *nowDate = [NSDate date];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyyMMdd"];
-    NSString *dateString = [dateFormatter stringFromDate:nowDate];
-    switch (timeType) {
-        case 0: {
-            NSRange range = NSMakeRange(0, 4);
-            NSString *yearString = [dateString substringWithRange:range];
-            return yearString.integerValue;
-            break;
-        }
-        case 1: {
-            NSRange range = NSMakeRange(4, 2);
-            NSString *yearString = [dateString substringWithRange:range];
-            return yearString.integerValue;
-            break;
-        }
-        case 2: {
-            NSRange range = NSMakeRange(6, 2);
-            NSString *yearString = [dateString substringWithRange:range];
-            return yearString.integerValue;
-            break;
-        }
-    }
-    return 0;
 }
 
 #pragma mark - 获取选中的年中选中月的天数

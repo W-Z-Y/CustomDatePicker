@@ -8,37 +8,81 @@
 
 #import "ViewController.h"
 #import "DatePickerView.h"
+#import "SelectBirthdayViewController.h"
 
-@interface ViewController ()<DatePickerViewDelegate>
+@interface ViewController ()<DatePickerViewDelegate, SelectBirthdayViewControllerDelegate>
 
-@property (weak, nonatomic) IBOutlet UIButton *birthdayButton;
-@property (nonatomic, strong) DatePickerView *datePicker;
+@property (nonatomic, strong) DatePickerView *datePickerView;
+@property (nonatomic, strong) SelectBirthdayViewController *selectBirthdayVC;
+@property (nonatomic, strong) UIButton *datePickerButton;
+@property (nonatomic, strong) UIButton *selectBirthdayButton;
 
 @end
 
 @implementation ViewController
 
+@synthesize datePickerView;
+@synthesize selectBirthdayVC;
+@synthesize datePickerButton;
+@synthesize selectBirthdayButton;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self setupDatePickerButton];
+    [self setupSelectBirthdayButton];
 }
 
-- (IBAction)setBirthday:(UIButton *)sender {
-    CGFloat width = [UIScreen mainScreen].bounds.size.width-100;
+- (void)setupDatePickerButton {
+    datePickerButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, 30)];
+    datePickerButton.center = CGPointMake(Device_Width/2.0, Device_Height/4.0);
+    [datePickerButton setTitle:@"选择日期" forState:(UIControlStateNormal)];
+    [datePickerButton setTitleColor:[UIColor blackColor] forState:(UIControlStateNormal)];
+    [datePickerButton addTarget:self action:@selector(setupDatePicker) forControlEvents:(UIControlEventTouchUpInside)];
+    [self.view addSubview:datePickerButton];
+}
+
+- (void)setupDatePicker {
+    CGFloat width = Device_Width-100;
     CGFloat height = width*0.8;
-    DatePickerView *datePicker = [[DatePickerView alloc] initWithFrame:CGRectMake(0, 0, width, height)];
-    datePicker.center = self.view.center;
-    datePicker.delegate = self;
-    [self.view addSubview:datePicker];
-    self.datePicker = datePicker;
+    datePickerView = [[DatePickerView alloc] initWithFrame:CGRectMake(0, 0, width, height)];
+    datePickerView.center = datePickerButton.center;
+    datePickerView.delegate = self;
+    [self.view addSubview:datePickerView];
 }
 
 - (void)confirmAction:(UIButton *)sender {
-    [self.datePicker removeFromSuperview];
-    [self.birthdayButton setTitle:self.datePicker.selectedDate forState:(UIControlStateNormal)];
+    [datePickerButton setTitle:datePickerView.selectedDate forState:(UIControlStateNormal)];
+    [datePickerView removeFromSuperview];
 }
 
 - (void)cancelAction:(UIButton *)sender {
-    [self.datePicker removeFromSuperview];
+    [datePickerView removeFromSuperview];
+}
+
+- (void)setupSelectBirthdayButton {
+    selectBirthdayButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, 30)];
+    selectBirthdayButton.center = CGPointMake(Device_Width/2.0, Device_Height/4.0*3);
+    [selectBirthdayButton setTitle:@"选择生日" forState:(UIControlStateNormal)];
+    [selectBirthdayButton setTitleColor:[UIColor blackColor] forState:(UIControlStateNormal)];
+    [ selectBirthdayButton addTarget:self action:@selector(setupBirthdayPicker) forControlEvents:(UIControlEventTouchUpInside)];
+    [self.view addSubview:selectBirthdayButton];
+}
+
+- (void)setupBirthdayPicker {
+    CGFloat width = Device_Width-100;
+    CGFloat height = width*0.8;
+    selectBirthdayVC = [[SelectBirthdayViewController alloc] init];
+    selectBirthdayVC.view.frame = CGRectMake(0, 0, width, height);
+    selectBirthdayVC.view.center = selectBirthdayButton.center;
+    selectBirthdayVC.delegate = self;
+    [self.view addSubview:selectBirthdayVC.view];
+    [self addChildViewController:selectBirthdayVC];
+}
+
+- (void)finishWithSelectedBirthday:(NSString *)birthday {
+    [selectBirthdayButton setTitle:birthday forState:(UIControlStateNormal)];
+    [selectBirthdayVC.view removeFromSuperview];
+    [selectBirthdayVC removeFromParentViewController];
 }
 
 - (void)didReceiveMemoryWarning {
